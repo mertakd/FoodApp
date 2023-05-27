@@ -1,4 +1,4 @@
-package com.sisifos.foodapp
+package com.sisifos.foodapp.data.network
 
 import com.sisifos.foodapp.models.FoodRecipe
 import retrofit2.Response

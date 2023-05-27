@@ -1,4 +1,4 @@
-package com.sisifos.foodapp
+package com.sisifos.foodapp.util
 
 class Constants {
 

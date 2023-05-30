@@ -4,13 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.sisifos.foodapp.data.Repository
+import com.sisifos.foodapp.data.database.RecipesEntity
 import com.sisifos.foodapp.models.FoodRecipe
 import com.sisifos.foodapp.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.lang.Exception
@@ -24,10 +24,28 @@ class MainViewModel @Inject constructor(
     application: Application
 ): AndroidViewModel(application) {
 
+    /**
+     *ROOM
+     */
+    val readRecipes: LiveData<List<RecipesEntity>> = repository.local.readRecipes().asLiveData()
+
+    private fun insertRecipes(recipesEntity: RecipesEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.insertRecipes(recipesEntity)
+        }
+
+
+
+    /**
+     *RETROFIT
+     */
+
     //inject kullandığımız için viewmodel factory kullanmamıza gerek yok arka planda kendisi bazı kodları oluşturuyor.
     //kısaca yapılan işlem: istek atılır, bunların kontolü yapılır ve recipesResponse mutablelivedata sına kaydedilir.
 
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipe>> = MutableLiveData()
+
+
 
     fun getRecipes(queries: Map<String, String>) = viewModelScope.launch {
         getRecipesSafeCall(queries)
@@ -40,6 +58,11 @@ class MainViewModel @Inject constructor(
                 val response = repository.remote.getRecipes(queries)
                 recipesResponse.value = handleFoodRecipesResponse(response)
 
+                val foodRecipe = recipesResponse.value!!.data
+                if(foodRecipe != null) {
+                    offlineCacheRecipes(foodRecipe)
+                }
+
             } catch (e: Exception) {
                 recipesResponse.value = NetworkResult.Error("Recipes not found.")
             }
@@ -47,6 +70,17 @@ class MainViewModel @Inject constructor(
             recipesResponse.value = NetworkResult.Error("No Internet Connection.")
         }
     }
+
+    private fun offlineCacheRecipes(foodRecipe: FoodRecipe) {
+        val recipesEntity = RecipesEntity(foodRecipe)
+        insertRecipes(recipesEntity)
+    }
+
+    /*
+        Bu kod parçacığı, offlineCacheRecipes işlevini kullanarak FoodRecipe nesnesini RecipesEntity nesnesine dönüştürür ve
+        ardından bu dönüştürülmüş veriyi insertRecipes işlevine geçerek veritabanına ekler.
+        Bu, yemek tarifi verilerini çevrimdışı olarak önbelleğe almak için kullanılan bir adımdır.
+     */
 
     private fun handleFoodRecipesResponse(response: Response<FoodRecipe>): NetworkResult<FoodRecipe> {
         when {

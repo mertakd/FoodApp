@@ -1,7 +1,9 @@
 package com.sisifos.foodapp.viewmodels
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.sisifos.foodapp.data.DataStoreRepository
 import com.sisifos.foodapp.data.MealAndDietType
@@ -31,12 +33,15 @@ class RecipesViewModel @Inject constructor (
     /*Bu RecipesViewModel sınıfı, yemek tarifi verilerini yönetmek, kullanıcının seçtiği yemek ve diyet özelliklerini kaydetmek ve sorguları oluşturmak gibi işlemleri gerçekleştirir.
       Bu işlevler, kullanıcı arayüzünden gelen isteklere yanıt vermek ve ilgili verileri sağlamak için kullanılabilir.*/
 
-
+    var networkStatus = false
+    var backOnline = false
 
     private lateinit var mealAndDiet: MealAndDietType
     /*
     * private lateinit var mealAndDiet: MealAndDietType: Bu değişken, kullanıcının seçtiği yemek ve diyet özelliklerini (MealAndDietType) tutar.
     * İlk olarak başlatılmaz ve saveMealAndDietTypeTemp işlevi tarafından ayarlanır.*/
+
+    val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
 
 
     fun saveMealAndDietTypeTemp(
@@ -82,7 +87,10 @@ class RecipesViewModel @Inject constructor (
     *  Bu işlev, viewModelScope içinde IO dağıtıcısında çalışır.*/
 
 
-
+    private fun saveBackOnline(backOnline: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.saveBackOnline(backOnline)
+        }
 
 
 
@@ -125,6 +133,20 @@ class RecipesViewModel @Inject constructor (
     QUERY_TYPE anahtarı, DEFAULT_MEAL_TYPE değeriyle ilişkilendirilir.
     QUERY_DIET anahtarı, DEFAULT_DIET_TYPE değeriyle ilişkilendirilir.
     *Son olarak, queries nesnesi döndürülür, böylece API isteği için kullanılabilecek tüm sorgu parametreleri içerilmiş olur.*/
+
+
+
+    fun showNetworkStatus() {
+        if (!networkStatus) {
+            Toast.makeText(getApplication(), "No Internet Connection.", Toast.LENGTH_SHORT).show()
+            saveBackOnline(true)
+        } else if (networkStatus) {
+            if (backOnline) {
+                Toast.makeText(getApplication(), "We're back online.", Toast.LENGTH_SHORT).show()
+                saveBackOnline(false)
+            }
+        }
+    }
 
 
 

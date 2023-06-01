@@ -36,10 +36,20 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
         val selectedMealTypeId = intPreferencesKey(PREFERENCES_MEAL_TYPE_ID)
         val selectedDietType = stringPreferencesKey(PREFERENCES_DIET_TYPE)
         val selectedDietTypeId = intPreferencesKey(PREFERENCES_DIET_TYPE_ID)
-
+        val backOnline = booleanPreferencesKey(PREFERENCES_BACK_ONLINE)
 
         //oluşturulan anahtarlar
     }
+
+
+    suspend fun saveBackOnline(backOnline: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.backOnline] = backOnline
+        }
+    }
+
+
+
 
 
     private val dataStore: DataStore<Preferences> = context.dataStore
@@ -108,6 +118,19 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
     * Örneğin, selectedMealType değeri, preferences nesnesinin PreferenceKeys.selectedMealType anahtarına karşılık gelen değeridir. Eğer PreferenceKeys.selectedMealType anahtarına karşılık gelen değer null ise, DEFAULT_MEAL_TYPE değeri kullanılır. Bu şekilde, her bir öğe dönüştürülerek yeni bir MealAndDietType nesnesi oluşturulur.
     *Sonuç olarak, map işlemi dataStore.data akışını dönüştürerek Flow<MealAndDietType> tipinde bir akış elde eder. Bu akış, MealAndDietType nesnelerini temsil eder ve daha sonra bu verileri kullanarak ilgili işlemleri gerçekleştirebilirsiniz. */
 
+
+    val readBackOnline: Flow<Boolean> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            val backOnline = preferences[PreferenceKeys.backOnline] ?: false
+            backOnline
+        }
 
 }
 

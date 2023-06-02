@@ -41,6 +41,14 @@ class RecipesViewModel @Inject constructor (
     * private lateinit var mealAndDiet: MealAndDietType: Bu değişken, kullanıcının seçtiği yemek ve diyet özelliklerini (MealAndDietType) tutar.
     * İlk olarak başlatılmaz ve saveMealAndDietTypeTemp işlevi tarafından ayarlanır.*/
 
+
+
+
+
+    val readMealAndDietType = dataStoreRepository.readMealAndDietType
+    /*
+    *  Bu özellik, dataStoreRepository üzerinden alınan yemek ve diyet özelliklerinin Flow nesnesini temsil eder.
+    *  Bu Flow, yemek ve diyet özelliklerinin güncel değerlerini yayınlar.*/
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
 
 
@@ -64,10 +72,7 @@ class RecipesViewModel @Inject constructor (
 
 
 
-    val readMealAndDietType = dataStoreRepository.readMealAndDietType
-    /*
-    *  Bu özellik, dataStoreRepository üzerinden alınan yemek ve diyet özelliklerinin Flow nesnesini temsil eder.
-    *  Bu Flow, yemek ve diyet özelliklerinin güncel değerlerini yayınlar.*/
+
 
 
 

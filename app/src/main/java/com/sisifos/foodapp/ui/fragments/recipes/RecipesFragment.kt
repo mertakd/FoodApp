@@ -74,6 +74,8 @@ class RecipesFragment : Fragment() {
            networkListener.checkNetworkAvailability(requireContext())
                .collect { status ->
                    Log.d("NetworkListener", status.toString())
+                   recipesViewModel.networkStatus = status
+                   recipesViewModel.showNetworkStatus()
                    readDatabase()
                }
        }

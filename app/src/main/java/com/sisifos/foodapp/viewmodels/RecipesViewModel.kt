@@ -88,6 +88,7 @@ class RecipesViewModel @Inject constructor (
             }
         }
     /*
+    *Bu kod parçası, RecipesViewModel sınıfında seçilen yemek ve diyet türü tercihlerinin kaydedilmesini sağlar. mealAndDiet örneğinin başlatıldığı bir senaryoda, bu tercihler dataStoreRepository üzerinden kalıcı olarak saklanır.
     *  Bu işlev, mealAndDiet değişkeninin başlatıldığı durumda, yemek ve diyet özelliklerini dataStoreRepository üzerinde kaydeder.
     *  Bu işlev, viewModelScope içinde IO dağıtıcısında çalışır.*/
 
@@ -99,7 +100,7 @@ class RecipesViewModel @Inject constructor (
 
 
 
-    fun applyQueries(): HashMap<String, String> {
+    fun  applyQueries(): HashMap<String, String> {
 
         val queries: HashMap<String, String> = HashMap()
 

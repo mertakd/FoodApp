@@ -22,6 +22,7 @@ import javax.inject.Inject
 
 
 private val Context.dataStore by preferencesDataStore(PREFERENCES_NAME)
+//"foody_preferences" bu ad altında tüm key ler kaydedilecek.
 
 
 @ViewModelScoped
@@ -38,7 +39,9 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
         val selectedDietTypeId = intPreferencesKey(PREFERENCES_DIET_TYPE_ID)
         val backOnline = booleanPreferencesKey(PREFERENCES_BACK_ONLINE)
 
-        //oluşturulan anahtarlar
+        //oluşturulan anahtarlar - KEY
+        //key ler type-value şeklinde oluşturulur. ör stringPreferencesKey string türünde, value değeri mealType(PREFERENCES_MEAL_TYPE)
+        //Her bir çipin adını ve id sini kaydediyoruz. read yapabilmemiz için yani uygulayabilmemiz için id sini de kaydediyoruz
     }
 
 
@@ -74,6 +77,10 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
             preferences[PreferenceKeys.selectedMealTypeId] = mealTypeId
             preferences[PreferenceKeys.selectedDietType] = dietType
             preferences[PreferenceKeys.selectedDietTypeId] = dietTypeId
+
+            //data store, prefences değeri ile, yukarıda ki keyleri kaydeder.
+            //key name:PreferenceKeys.selectedMealType,   value: = mealType
+            //keyleri parametre olarak alıp kaydedecek.
         }
     }
     /*
@@ -94,7 +101,7 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
     val readMealAndDietType: Flow<MealAndDietType> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
-                emit(emptyPreferences())
+                emit(emptyPreferences()) //Eğer yakalanan istisna bir IOException ise, emptyPreferences() işlevi çağrılarak boş bir tercihler nesnesi oluşturulur ve bu nesne akışa yayınlanır. Bu yaklaşım, hata durumunda akışın kesilmesini önlemek için kullanılır. Hata durumunda, istemciye boş bir tercihler nesnesi sağlanır ve uygulamanın düzgün bir şekilde çalışmaya devam etmesi sağlanır.
             } else {
                 throw exception
             }
@@ -141,3 +148,29 @@ data class MealAndDietType(
     val selectedDietType: String,
     val selectedDietTypeId: Int
 )
+
+/*data class MealAndDietType
+*MealAndDietType sınıfı bir veri taşıyıcısı olarak kullanılır.
+*DataStoreRepository sınıfı, bu veri yapısını kullanarak kullanıcının tercihlerini saklar ve okur. Bu sınıfın kullanılması, verilerin daha düzenli ve yapılandırılmış bir şekilde taşınmasını sağlar. Aynı zamanda, veri sınıfının içerisinde yer alan özellikler üzerinden tercihlerle ilgili işlemler yapılabilir ve bu özelliklere kolayca erişim sağlanabilir.  */
+
+
+
+
+
+
+
+
+
+
+/* DataStoreReposiry Görevi
+*bu sınıfta seçilen çiplerle istek atılmaz, bu DataStoreRepository sınıfı sadece kullanıcının seçtiği yemek ve diyet türü tercihlerini kalıcı olarak saklamak ve bu tercihlere erişim sağlamak için tasarlanmıştır. Bu sınıf, tercihlerin saklanmasını ve okunmasını sağlayan bir veri deposu işlevselliği sağlar. Ancak, sınıf içinde seçilen chip tercihlerine istek atılmaz.
+*DataStoreRepository sınıfının amacı, tercihlerin kalıcı olarak saklanması ve erişimi sağlanmasıdır. Bunun yanı sıra, bu tercihlerin uygulamanın diğer bölümlerinde kullanılabilmesini sağlar. Örneğin, kullanıcı yemek veya diyet tercihlerini seçtikten sonra bu tercihler DataStore'da saklanır ve diğer bölümlerde bu tercihlere erişilebilir. Ancak, bu sınıf, tercihlerin sunucuya veya başka bir yerde istek atılmasını sağlamaz. Bu sınıf, yalnızca tercihlerin yerel olarak saklanması ve erişilmesi için kullanılır.
+*
+* Bu DataStoreRepository sınıfı, kullanıcının seçtiği yemek ve diyet türü tercihlerini kalıcı olarak saklamak ve bu tercihlere erişim sağlamak için Android Jetpack DataStore kütüphanesini kullanan bir veri deposu işlevselliği sağlar.
+* Genel olarak, bu sınıf şu işlevleri yerine getirir:
+* Kullanıcının seçtiği yemek ve diyet türü tercihlerini kalıcı olarak saklamak için DataStore kullanır.
+* Kullanıcının çevrimdışı modda olup olmadığını saklamak için DataStore kullanır.
+* Kullanıcının seçtiği yemek ve diyet türü tercihlerini okumak için Flow akışını kullanır. Bu sayede, tercihlerdeki değişiklikleri dinleyebilir ve güncel değerlere erişebilirsiniz.
+* Kullanıcının çevrimdışı modda olup olmadığını okumak için Flow akışını kullanır.
+* Kullanıcının seçtiği yemek ve diyet türü tercihlerini kaydetmek için saveMealAndDietType işlevini sağlar.
+*Kullanıcının çevrimdışı mod durumunu kaydetmek için saveBackOnline işlevini sağlar. */

@@ -102,13 +102,15 @@ class RecipesFragment : Fragment() {
 
 
     private fun readDatabase() {
-        mainViewModel.readRecipes.observeOnce(viewLifecycleOwner) { database ->
-            if (database.isNotEmpty() && !args.backFromBottonSheet){
-                Log.d("RecipesFragment", "readDatabase called!")
-                mAdapter.setData(database[0].foodRecipe) //room boş değilse veriler roomdan çekiliyor
-                hideShimmerEffect()
-            }else{
-                requestApiData() //room boş ise veriler api den çekiliyor.
+        lifecycleScope.launch {
+            mainViewModel.readRecipes.observeOnce(viewLifecycleOwner) { database ->
+                if (database.isNotEmpty() && !args.backFromBottonSheet){
+                    Log.d("RecipesFragment", "readDatabase called!")
+                    mAdapter.setData(database[0].foodRecipe) //room boş değilse veriler roomdan çekiliyor
+                    hideShimmerEffect()
+                }else{
+                    requestApiData() //room boş ise veriler api den çekiliyor.
+                }
             }
         }
     }
@@ -121,12 +123,12 @@ class RecipesFragment : Fragment() {
             when (response) {
                 is NetworkResult.Success -> {
                     hideShimmerEffect()
-                    response.data?.let { mAdapter.setData(it) }
+                    response.data?.let { mAdapter.setData(it) } //it food recipe api alıp adapter a atıyoruz.
                     recipesViewModel.saveMealAndDietType()
                 }
                 is NetworkResult.Error -> {
                     hideShimmerEffect()
-                    loadDataFromCache()
+                    loadDataFromCache() //istek de hata alırsak cache de olan verileri göstereceğiz
                     Toast.makeText(
                         requireContext(),
                         response.message.toString(),

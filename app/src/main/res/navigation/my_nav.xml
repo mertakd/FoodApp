@@ -39,4 +39,5 @@
             app:popUpTo="@id/recipesFragment"
             app:popUpToInclusive="true" />
     </dialog>
+
 </navigation>

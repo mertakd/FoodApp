@@ -34,6 +34,12 @@ class RecipesRowBinding {
         }
 
 
+
+
+
+
+
+
         @BindingAdapter("setNumberOfMinutes")
         @JvmStatic
         fun setNumberOfMinutes(textView: TextView, minutes: Int){

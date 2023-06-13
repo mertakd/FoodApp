@@ -52,7 +52,9 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun getRecipesSafeCall(queries: Map<String, String>) {
+
         recipesResponse.value = NetworkResult.Loading()
+
         if (hasInternetConnection()) {
             try {
                 val response = repository.remote.getRecipes(queries)
@@ -134,3 +136,12 @@ class MainViewModel @Inject constructor(
      * Bu yapı, yemek tarifi verilerini almak ve bu verilere erişimi yönetmek için kullanılır.
      * recipesResponse değişkeni, API isteklerinin sonucunu saklar ve diğer bileşenlerin bu sonuçları gözlemlemesini sağlar. getRecipes fonksiyonu ise yemek tarifi verilerini almak için bir API isteği yapar ve sonucu recipesResponse üzerinden günceller.*/
 }
+
+
+
+/*
+* @HiltViewModel
+*@HiltViewModel bir Hilt anotasyonudur ve ViewModel sınıflarının Hilt tarafından yönetilmesini sağlar.
+*Bu anotasyonu bir ViewModel sınıfına eklediğinizde, Hilt bu sınıfın örneğini oluşturur ve ViewModel'in bağımlılıklarını enjekte etmesini sağlar. Bu sayede, ViewModel'in bağımlılıklarını elle yönetmek veya örneğini oluşturmak için ekstra kod yazmanıza gerek kalmaz.
+*@HiltViewModel ayrıca, ViewModel'in yaşam döngüsünü ve etkileşimlerini doğru bir şekilde yönetmek için Hilt tarafından oluşturulan HiltViewModelFactory ile birlikte çalışır. Bu fabrika sınıfı, ViewModel'in oluşturulması ve bağımlılıklarının enjekte edilmesi için gereken işlemleri gerçekleştirir.
+*Bu örnekte @HiltViewModel anotasyonu, MainViewModel sınıfının Hilt tarafından yönetilen bir ViewModel olduğunu belirtir. Hilt, bu sınıfın örneğini oluştururken Repository bağımlılığını enjekte eder ve Application nesnesini sağlar. Böylece, MainViewModel içinde Repository ve Application nesnelerine erişebilirsiniz.    */

@@ -15,3 +15,5 @@ fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observ
 }
 
 //veriyi her zaman değil sadece bir kez gözlemler live data bu kod bloğu ile.
+
+//observeOnce: bu yapıyı kullanmadığımız zaman yani sadece observe yi kullandığımız zaman, uygulamayı silip yeniden yüklediğimiz de: hem requestapidata hem de readdatabase çağrılıyor. Ama observeOnce kullanıldığında  uygulama silinip yüklendiğinde sadece reqestApiData çağrılıyor.
